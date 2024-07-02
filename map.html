@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Picker Form</title>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+        .form-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <form id="location-form">
+        <input type="text" id="address" placeholder="Enter address" autocomplete="off" style="width: 100%; padding: 10px; margin-bottom: 10px;">
+        <input type="submit" value="Submit" style="width: 100%; padding: 10px;">
+    </form>
+    <div id="map"></div>
+</div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAvUEVT4AZYLlIpGDIag7AL62TPPI8Exns&libraries=places"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    let map;
+    let marker;
+    let autocomplete;
+
+    function initMap() {
+        const defaultLocation = { lat: 21.028511, lng: 105.804817 };
+
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: defaultLocation,
+            zoom: 20, // Closer zoom level to show buildings' tops
+            mapTypeId: 'satellite',
+            disableDefaultUI: true // Disable all UI controls for a cleaner look
+        });
+
+        marker = new google.maps.Marker({
+            position: defaultLocation,
+            map: map,
+            draggable: true
+        });
+
+        fillInAddress(defaultLocation); // Fill in the default address on load
+
+        autocomplete = new google.maps.places.Autocomplete(document.getElementById('address'));
+        autocomplete.bindTo('bounds', map);
+
+        autocomplete.addListener('place_changed', function() {
+            marker.setVisible(false);
+            let place = autocomplete.getPlace();
+            if (!place.geometry) {
+                return;
+            }
+
+            if (place.geometry.viewport) {
+                map.fitBounds(place.geometry.viewport);
+            } else {
+                map.setCenter(place.geometry.location);
+                map.setZoom(20); // Closer zoom level for detailed view of buildings
+            }
+
+            marker.setPosition(place.geometry.location);
+            marker.setVisible(true);
+        });
+
+        google.maps.event.addListener(map, 'click', function(event) {
+            marker.setPosition(event.latLng);
+            map.setCenter(event.latLng);
+            fillInAddress(event.latLng);
+        });
+
+        google.maps.event.addListener(marker, 'dragend', function(event) {
+            fillInAddress(event.latLng);
+        });
+    }
+
+    function fillInAddress(latLng) {
+        let geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ 'location': latLng }, function(results, status) {
+            if (status === 'OK') {
+                if (results[0]) {
+                    $('#address').val(results[0].formatted_address);
+                }
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        $('#location-form').on('submit', function(event) {
+            event.preventDefault();
+            alert('Address: ' + $('#address').val());
+        });
+
+        initMap();
+    });
+</script>
+</body>
+</html>

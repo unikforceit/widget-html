@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Page</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .booking-wrapper {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .booking-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 1200px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        .booking-image-container {
+            width: 100%;
+            position: relative;
+        }
+
+        .booking-room-image {
+            width: 100%;
+            height: auto;
+        }
+
+        .booking-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: red;
+            color: #fff;
+            padding: 5px 10px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .booking-details-container {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .booking-details-container h1,
+        .booking-details-container p,
+        .booking-details-container select {
+            text-align: center;
+        }
+
+        #booking-room-dropdown {
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 18px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .booking-price-details p {
+            margin: 10px 0;
+            font-size: 18px;
+        }
+
+        #booking-savings-amount {
+            color: green;
+            font-weight: bold;
+        }
+
+        .booking-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .booking-buttons button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+            flex-grow: 1;
+            max-width: 150px;
+        }
+
+        .booking-buttons button:hover {
+            background-color: #0056b3;
+        }
+
+        @media(min-width: 768px) {
+            .booking-container {
+                flex-direction: row;
+            }
+
+            .booking-image-container,
+            .booking-details-container {
+                width: 50%;
+            }
+
+            .booking-details-container {
+                padding: 40px;
+            }
+
+            .booking-buttons button {
+                margin: 10px;
+                flex-grow: 0;
+            }
+        }
+
+        @media(min-width: 1024px) {
+            #booking-room-dropdown {
+                font-size: 20px;
+            }
+
+            .booking-price-details p {
+                font-size: 20px;
+            }
+
+            .booking-buttons button {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="booking-wrapper">
+    <div class="booking-container">
+        <div class="booking-image-container">
+            <img src="https://via.placeholder.com/300x400" alt="Room Image" class="booking-room-image">
+            <span class="booking-badge">Special Offer</span>
+        </div>
+        <div class="booking-details-container">
+            <select id="booking-room-dropdown">
+                <option value="standard" data-regular-price="150" data-sale-price="100" data-link="link1">Standard Room - $100</option>
+                <option value="deluxe" data-regular-price="250" data-sale-price="200" data-link="link2">Deluxe Room - $200</option>
+                <option value="suite" data-regular-price="350" data-sale-price="300" data-link="link3">Suite - $300</option>
+            </select>
+            <div class="booking-price-details">
+                <p>Regular Price: <span id="booking-regular-price">$150</span></p>
+                <p>Sale Price: <span id="booking-sale-price">$120</span></p>
+                <p>You Save: <span id="booking-savings-amount">$30</span></p>
+            </div>
+            <div class="booking-buttons">
+                <button id="booking-inquiry-button">Inquiry</button>
+                <a href="#" id="booking-book-button"><button>Book Now</button></a>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#booking-room-dropdown').change(function() {
+            var selectedOption = $(this).find('option:selected');
+            var regularPrice = selectedOption.data('regular-price');
+            var salePrice = selectedOption.data('sale-price');
+            var link = selectedOption.data('link');
+            var savings = regularPrice - salePrice;
+
+            $('#booking-regular-price').text('$' + regularPrice);
+            $('#booking-sale-price').text('$' + salePrice);
+            $('#booking-savings-amount').text('$' + savings);
+            $('#booking-book-button').attr('href', link);
+        });
+
+        // Trigger change event on page load to initialize values
+        $('#booking-room-dropdown').trigger('change');
+    });
+</script>
+</body>
+</html>
